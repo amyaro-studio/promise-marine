@@ -1124,6 +1124,39 @@ if (back) {
       });
   };
 }
+  function getCurrencyLabels(currency) {
+  const currencies = {
+    EGP: {
+      ar: "جنيه مصري",
+      en: "Egyptian Pounds"
+    },
+    USD: {
+      ar: "دولار أمريكي",
+      en: "US Dollars"
+    },
+    EUR: {
+      ar: "يورو",
+      en: "Euros"
+    }
+  };
+
+  return currencies[currency] || currencies.EGP;
+}
+
+function formatBoatPrice(price, currency, lang) {
+  if (price == null || price === "") {
+    return lang === "ar" ? "السعر عند الطلب" : "Price on Request";
+  }
+
+  const labels = getCurrencyLabels(currency);
+  const number = Number(price).toLocaleString("en-US");
+
+  if (lang === "ar") {
+    return `${number} ${labels.ar} · قابل للتفاوض`;
+  }
+
+  return `${number} ${labels.en} · Negotiable`;
+}
 
 /* --------------------------------------------------
    LOAD FROM SUPABASE
@@ -1339,23 +1372,20 @@ async function loadListingsFromSupabase() {
         ? fixed.priceValue
         : Number(boat.price || 0);
 
-    const priceEn =
-      hasFixedData
-        ? fixed.priceEn
-        : (
-            boat.price
-              ? `EGP ${Number(boat.price).toLocaleString("en-US")}`
-              : "Price on Request"
-          );
+    const currency =
+  hasFixedData
+    ? "EGP"
+    : (boat.currency || "EGP");
 
-    const priceAr =
-      hasFixedData
-        ? fixed.priceAr
-        : (
-            boat.price
-              ? `${Number(boat.price).toLocaleString("en-US")} جنيه مصري`
-              : "السعر عند الطلب"
-          );
+   const priceEn =
+  hasFixedData
+    ? fixed.priceEn
+    : formatBoatPrice(boat.price, currency, "en");
+
+const priceAr =
+  hasFixedData
+    ? fixed.priceAr
+    : formatBoatPrice(boat.price, currency, "ar");
 
     const extraEn =
       hasFixedData
@@ -1399,6 +1429,7 @@ async function loadListingsFromSupabase() {
       priceValue,
       priceEn,
       priceAr,
+      currency,
 
       extraEn,
       extraAr,
