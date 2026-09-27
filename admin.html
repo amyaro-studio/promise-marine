@@ -1059,13 +1059,16 @@ const safeName =
 
         const file = files[i];
 
-        const safeName =
-          Date.now() +
-          "_" +
-          i +
-          "_" +
-          file.name.replace(/\s+/g, "_");
-
+const safeName =
+  Date.now() +
+  "_" +
+  i +
+  "_" +
+  file.name
+    .replace(/\.[^/.]+$/, "")
+    .replace(/[^a-zA-Z0-9_-]/g, "_") +
+  "." +
+  file.name.split(".").pop().toLowerCase();
         const filePath =
           boatId + "/" + safeName;
 
