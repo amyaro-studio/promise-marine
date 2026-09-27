@@ -1287,9 +1287,11 @@ const video =
     : (fixed.fallbackVideo || null);
 
 const category =
-  boat.category ||
-  fixed.category ||
-  "boat";
+  String(
+    boat.category ||
+    fixed.category ||
+    "boat"
+  ).trim().toLowerCase();
 
 const type =
   category === "yacht"
