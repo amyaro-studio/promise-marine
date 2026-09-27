@@ -372,7 +372,7 @@
         password: password
       });
 
-    if (error) {
+       if (error) {
 
       message.innerHTML =
         '<div class="message">' +
@@ -381,8 +381,6 @@
 
       return;
     }
-        showAdmin();
-  }
 
     if (!data.user || data.user.id !== ADMIN_UID) {
 
@@ -397,7 +395,6 @@
     showAdmin();
 
   }
-
 
   // =========================
   // SHOW ADMIN
@@ -511,21 +508,22 @@
     }
 
 
-    const { data: boat, error: boatError } =
-      await supabaseClient
-        .from("boats")
-        .insert({
-          name_ar: nameAr,
-          name_en: nameEn,
-          description_ar: descriptionAr,
-          description_en: descriptionEn,
-         price: price ? Number(price) : null,
-currency: currency,
-length_ft: lengthFt ? Number(lengthFt) : null,
-capacity: capacity ? Number(capacity) : null,
-category: category || null
-        .select()
-        .single();
+   const { data: boat, error: boatError } =
+  await supabaseClient
+    .from("boats")
+    .insert({
+      name_ar: nameAr,
+      name_en: nameEn,
+      description_ar: descriptionAr,
+      description_en: descriptionEn,
+      price: price ? Number(price) : null,
+      currency: currency,
+      length_ft: lengthFt ? Number(lengthFt) : null,
+      capacity: capacity ? Number(capacity) : null,
+      category: category || null
+    })
+    .select()
+    .single();
 
 
     if (boatError) {
