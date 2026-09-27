@@ -1266,15 +1266,18 @@ async function loadListingsFromSupabase() {
         .map(item => item.image_url)
         .filter(Boolean);
 
-    const media =
-      images.length
-        ? images
-        : (fixed.fallbackMedia || []);
+   const media =
+  [
+    ...(images.length
+      ? images
+      : (fixed.fallbackMedia || [])),
+    ...videos
+  ];
 
-    const video =
-      videos.length
-        ? videos[0]
-        : (fixed.fallbackVideo || null);
+const video =
+  videos.length
+    ? videos[0]
+    : (fixed.fallbackVideo || null);
 
     const category =
       fixed.category ||
