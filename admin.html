@@ -263,8 +263,15 @@
       <label>Description in English</label>
       <textarea id="descriptionEn"></textarea>
 
-      <label>السعر</label>
-      <input id="price" type="number">
+  <label>السعر</label>
+<input id="price" type="number">
+
+<label>العملة</label>
+<select id="currency">
+  <option value="EGP">جنيه مصري (EGP)</option>
+  <option value="USD">دولار أمريكي (USD)</option>
+  <option value="EUR">يورو (EUR)</option>
+</select>
 
       <label>الطول بالقدم</label>
       <input id="lengthFt" type="number">
@@ -478,6 +485,7 @@
 
     const price =
       document.getElementById("price").value;
+    const currency = document.getElementById("currency").value;
 
     const lengthFt =
       document.getElementById("lengthFt").value;
@@ -509,11 +517,11 @@
           name_en: nameEn,
           description_ar: descriptionAr,
           description_en: descriptionEn,
-          price: price ? Number(price) : null,
-          length_ft: lengthFt ? Number(lengthFt) : null,
-          capacity: capacity ? Number(capacity) : null,
-          category: category || null
-        })
+         price: price ? Number(price) : null,
+currency: currency,
+length_ft: lengthFt ? Number(lengthFt) : null,
+capacity: capacity ? Number(capacity) : null,
+category: category || null
         .select()
         .single();
 
@@ -622,6 +630,7 @@
     document.getElementById("descriptionAr").value = "";
     document.getElementById("descriptionEn").value = "";
     document.getElementById("price").value = "";
+    document.getElementById("currency").value = "EGP";
     document.getElementById("lengthFt").value = "";
     document.getElementById("capacity").value = "";
     document.getElementById("category").value = "";
@@ -759,12 +768,19 @@
             id="edit-description-en-${boat.id}"
           >${escapeHtml(boat.description_en || "")}</textarea>
 
-          <label>السعر</label>
-          <input
-            id="edit-price-${boat.id}"
-            type="number"
-            value="${boat.price != null ? boat.price : ""}"
-          >
+         <label>السعر</label>
+<input
+  id="edit-price-${boat.id}"
+  type="number"
+  value="${boat.price != null ? boat.price : ""}"
+>
+
+<label>العملة</label>
+<select id="edit-currency-${boat.id}">
+  <option value="EGP" ${(boat.currency || "EGP") === "EGP" ? "selected" : ""}>جنيه مصري (EGP)</option>
+  <option value="USD" ${boat.currency === "USD" ? "selected" : ""}>دولار أمريكي (USD)</option>
+  <option value="EUR" ${boat.currency === "EUR" ? "selected" : ""}>يورو (EUR)</option>
+</select>
 
           <label>الطول بالقدم</label>
           <input
@@ -970,6 +986,10 @@
       document.getElementById(
         "edit-price-" + boatId
       ).value;
+    const currency =
+  document.getElementById(
+    "edit-currency-" + boatId
+  ).value;
 
     const lengthFt =
       document.getElementById(
@@ -1011,6 +1031,7 @@
           description_ar: descriptionAr,
           description_en: descriptionEn,
           price: price ? Number(price) : null,
+          currency: currency,
           length_ft: lengthFt ? Number(lengthFt) : null,
           capacity: capacity ? Number(capacity) : null,
           category: category || null
