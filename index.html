@@ -1273,8 +1273,7 @@ async function loadListingsFromSupabase() {
         .filter(item => item.is_video)
         .map(item => item.image_url)
         .filter(Boolean);
-
-   const media =
+const media =
   [
     ...(images.length
       ? images
@@ -1287,54 +1286,48 @@ const video =
     ? videos[0]
     : (fixed.fallbackVideo || null);
 
-    const category =
-      fixed.category ||
-      boat.category ||
-      "boat";
+const category =
+  boat.category ||
+  fixed.category ||
+  "boat";
 
-    const type =
-      fixed.type ||
-      (
-        category === "yacht"
-          ? "YACHT"
-          : category === "jet"
-            ? "JET"
-            : "BOAT"
-      );
+const type =
+  category === "yacht"
+    ? "YACHT"
+    : category === "jet"
+      ? "JET"
+      : (fixed.type || "BOAT");
 
-    const typeAr =
-      fixed.typeAr ||
-      (
-        category === "yacht"
-          ? "يخت"
-          : category === "jet"
-            ? "جيت"
-            : "مركب"
-      );
+const typeAr =
+  category === "yacht"
+    ? "يخت"
+    : category === "jet"
+      ? "جيت"
+      : (fixed.typeAr || "مركب");
 
-    const hasFixedData =
-      Boolean(fixedBoats[boat.id]);
+const hasFixedData =
+  Boolean(fixedBoats[boat.id]);
 
-    const nameEn =
-      hasFixedData
-        ? fixed.nameEn
-        : (boat.name_en || "Boat");
+const nameEn =
+  hasFixedData
+    ? fixed.nameEn
+    : (boat.name_en || "Boat");
 
-    const nameAr =
-      hasFixedData
-        ? fixed.nameAr
-        : (boat.name_ar || "مركب");
+const nameAr =
+  hasFixedData
+    ? fixed.nameAr
+    : (boat.name_ar || "مركب");
 
-    const descEn =
-      hasFixedData
-        ? fixed.descEn
-        : (boat.description_en || "");
+const descEn =
+  hasFixedData
+    ? fixed.descEn
+    : (boat.description_en || "");
 
-    const descAr =
-      hasFixedData
-        ? fixed.descAr
-        : (boat.description_ar || "");
-
+const descAr =
+  hasFixedData
+    ? fixed.descAr
+    : (boat.description_ar || "");
+    
     const lengthValue =
       hasFixedData
         ? fixed.lengthValue
