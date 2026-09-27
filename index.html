@@ -956,15 +956,23 @@ function openDetail(id, shouldScroll = true) {
       ? item.media
       : [];
 
-  if (mediaList.length) {
+ const firstVideo =
+  mediaList.find(src =>
+    /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(src)
+  );
 
-    showDetailMedia(
-      mediaList[0],
-      item.nameEn,
-      media
-    );
+const firstMedia =
+  firstVideo || mediaList[0];
 
-  }
+if (firstMedia) {
+
+  showDetailMedia(
+    firstMedia,
+    item.nameEn,
+    media
+  );
+
+}
 
   mediaList.forEach((src, index) => {
 
