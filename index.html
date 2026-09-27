@@ -916,49 +916,31 @@ function openDetail(id, shouldScroll = true) {
   detail.hidden = false;
 
   document.getElementById("detailStatus").textContent =
-    isArabic
-      ? "للبيع"
-      : "FOR SALE";
+    isArabic ? "للبيع" : "FOR SALE";
 
   document.getElementById("detailType").textContent =
-    isArabic
-      ? item.typeAr
-      : item.type;
+    isArabic ? item.typeAr : item.type;
 
   document.getElementById("detailName").textContent =
-    isArabic
-      ? item.nameAr
-      : item.nameEn;
+    isArabic ? item.nameAr : item.nameEn;
 
   document.getElementById("detailDesc").textContent =
-    isArabic
-      ? item.descAr
-      : item.descEn;
+    isArabic ? item.descAr : item.descEn;
 
   document.getElementById("specLength").textContent =
-    isArabic
-      ? item.lengthAr
-      : item.lengthEn;
+    isArabic ? item.lengthAr : item.lengthEn;
 
   document.getElementById("specCapacity").textContent =
-    isArabic
-      ? item.capacityAr
-      : item.capacityEn;
+    isArabic ? item.capacityAr : item.capacityEn;
 
   document.getElementById("specCondition").textContent =
-    isArabic
-      ? item.conditionAr
-      : item.conditionEn;
+    isArabic ? item.conditionAr : item.conditionEn;
 
   document.getElementById("specEngine").textContent =
-    isArabic
-      ? item.engineAr
-      : item.engineEn;
+    isArabic ? item.engineAr : item.engineEn;
 
   document.getElementById("detailPrice").textContent =
-    isArabic
-      ? item.priceAr
-      : item.priceEn;
+    isArabic ? item.priceAr : item.priceEn;
 
   const media =
     document.getElementById("detailMedia");
@@ -967,60 +949,81 @@ function openDetail(id, shouldScroll = true) {
     document.getElementById("gallery");
 
   gallery.innerHTML = "";
+  media.innerHTML = "";
 
   const mediaList =
     item.media && item.media.length
       ? item.media
       : [];
 
-  if (item.video) {
+  if (mediaList.length) {
 
-    media.innerHTML =
-      `<video controls muted playsinline preload="metadata">
-        <source src="${item.video}" type="video/mp4">
-      </video>
-      <div class="video-note">
-        ${isArabic ? "الفيديو بدون صوت" : "Video is muted"}
-      </div>`;
+    showDetailMedia(
+      mediaList[0],
+      item.nameEn,
+      media
+    );
 
-  } else if (mediaList.length) {
-
-    media.innerHTML =
-      `<img src="${mediaList[0]}" alt="${item.nameEn}">`;
-
-  } else {
-
-    media.innerHTML = "";
   }
 
   mediaList.forEach((src, index) => {
 
+    const isVideo =
+      /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(src);
+
     const thumbnail =
-      document.createElement("img");
+      document.createElement("div");
 
-    thumbnail.src = src;
-    thumbnail.alt = item.nameEn;
+    thumbnail.className = "media-thumb";
 
-    thumbnail.className =
-      index === 0 && !item.video
-        ? "active"
-        : "";
+    if (index === 0) {
+      thumbnail.classList.add("active");
+    }
+
+    if (isVideo) {
+
+      const video =
+        document.createElement("video");
+
+      video.src = src;
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = "metadata";
+
+      thumbnail.appendChild(video);
+
+    } else {
+
+      const image =
+        document.createElement("img");
+
+      image.src = src;
+      image.alt = item.nameEn;
+
+      thumbnail.appendChild(image);
+
+    }
 
     thumbnail.onclick = () => {
 
-      media.innerHTML =
-        `<img src="${src}" alt="${item.nameEn}">`;
+      showDetailMedia(
+        src,
+        item.nameEn,
+        media
+      );
 
       gallery
-        .querySelectorAll("img")
-        .forEach(image =>
-          image.classList.remove("active")
+        .querySelectorAll(".media-thumb")
+        .forEach(element =>
+          element.classList.remove("active")
         );
 
       thumbnail.classList.add("active");
+
     };
 
     gallery.appendChild(thumbnail);
+
   });
 
   const extra =
@@ -1041,9 +1044,10 @@ function openDetail(id, shouldScroll = true) {
     div.textContent = "✓ " + value;
 
     extra.appendChild(div);
+
   });
 
-      const whatsappBtn =
+  const whatsappBtn =
     document.getElementById("whatsappBtn");
 
   if (whatsappBtn) {
@@ -1095,15 +1099,45 @@ I would like to know more details.`;
 
     whatsappBtn.href =
       `https://wa.me/201000457254?text=${encodeURIComponent(message)}`;
+
   }
 
   if (shouldScroll) {
+
     detail.scrollIntoView({
       behavior: "smooth"
     });
+
   }
+
 }
 
+
+function showDetailMedia(src, alt, media) {
+
+  const isVideo =
+    /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(src);
+
+  if (isVideo) {
+
+    media.innerHTML =
+      `<video controls muted playsinline preload="metadata">
+        <source src="${src}">
+      </video>
+      <div class="video-note">
+        ${document.documentElement.lang === "ar"
+          ? "الفيديو بدون صوت"
+          : "Video is muted"}
+      </div>`;
+
+  } else {
+
+    media.innerHTML =
+      `<img src="${src}" alt="${alt}">`;
+
+  }
+
+}
 /* --------------------------------------------------
    BACK
 -------------------------------------------------- */
