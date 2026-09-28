@@ -99,7 +99,8 @@ footer{
   background:#10263a;
   color:#fff;
   transform:translateY(-2px);
-}.service-grid article{background:#fff;padding:30px 24px;border:1px solid #ded9cf;border-radius:12px}.service-grid i{font-style:normal;font-size:30px}.service-grid h3{font-size:17px;margin:16px 0 8px}.service-grid p{font-size:13px;line-height:1.7;color:#657485}.split{display:grid;grid-template-columns:1fr 1fr;min-height:560px}.image-placeholder{
+}
+.service-grid article{background:#fff;padding:30px 24px;border:1px solid #ded9cf;border-radius:12px}.service-grid i{font-style:normal;font-size:30px}.service-grid h3{font-size:17px;margin:16px 0 8px}.service-grid p{font-size:13px;line-height:1.7;color:#657485}.split{display:grid;grid-template-columns:1fr 1fr;min-height:560px}.image-placeholder{
   background:#dfe5e6;
   display:flex;
   align-items:end;
@@ -133,6 +134,94 @@ footer{
   .photo{
     height:auto;
     aspect-ratio:3 / 2;
+  }
+}.service-details{
+  display:none;
+  padding:90px 6%;
+  background:#f6f3ec;
+}
+
+.service-details.active{
+  display:block;
+}
+
+.service-details-inner{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:center;
+}
+
+.service-details-media{
+  min-height:420px;
+}
+
+.service-details-placeholder{
+  min-height:420px;
+  border-radius:12px;
+  background:linear-gradient(145deg,#5f7887,#dce2df 50%,#21465e);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font:600 24px "Playfair Display",serif;
+  letter-spacing:2px;
+}
+
+.service-details-copy h2{
+  font-size:42px;
+  line-height:1.1;
+  margin:10px 0 20px;
+}
+
+.service-details-copy>p:not(.eyebrow){
+  color:#5d6d7d;
+  line-height:1.85;
+  max-width:620px;
+}
+
+.service-detail-note{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid #d6d1c8;
+  color:#748494;
+  font-size:12px;
+}
+
+.service-back{
+  display:inline-flex;
+  margin-top:25px;
+  color:#10263a;
+  font-weight:700;
+  text-decoration:none;
+}
+
+.service-back:hover{
+  opacity:.65;
+}
+
+@media(max-width:900px){
+  .service-details-inner{
+    grid-template-columns:1fr;
+    gap:35px;
+  }
+
+  .service-details-placeholder{
+    min-height:320px;
+  }
+}
+
+@media(max-width:560px){
+  .service-details{
+    padding:60px 5%;
+  }
+
+  .service-details-copy h2{
+    font-size:37px;
+  }
+
+  .service-details-placeholder{
+    min-height:280px;
   }
 }
 body.rtl .eyebrow{
