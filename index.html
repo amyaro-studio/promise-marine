@@ -426,20 +426,26 @@ body.rtl .control select{
 </section>
 
 <section class="services" id="services"><div class="section-title"><div><p class="eyebrow" data-en="WHAT WE DO" data-ar="ماذا نقدم">WHAT WE DO</p><h2 data-en="Our Services" data-ar="خدماتنا">Our Services</h2></div></div><div class="service-grid">
-<article><i>⚓</i><h3 data-en="Marine Services" data-ar="الخدمات البحرية">Marine Services</h3><p data-en="Berthing, boat care and marine support." data-ar="رسو المراكب والعناية بها والدعم البحري.">Berthing, boat care and marine support.</p><a href="#service-details" class="service-btn"
+<article><i>⚓</i><h3 data-en="Marine Services" data-ar="الخدمات البحرية">Marine Services</h3><p data-en="Berthing, boat care and marine support." data-ar="رسو المراكب والعناية بها والدعم البحري.">Berthing, boat care and marine support.</p>
+  <a href="#service-details" class="service-btn"
+   data-service="marine"
    data-en="View Details →"
    data-ar="عرض التفاصيل ←">View Details →</a></article>
  <article>
   <i>🔧</i>
   <h3 data-en="Boat Repair, Maintenance & Restoration" data-ar="إصلاح وصيانة وتجديد المراكب">إصلاح وصيانة وتجديد المراكب</h3>
-  <p data-en="Repair, maintenance, restoration and preparation for boats and yachts." data-ar="إصلاح وصيانة وتجديد وتجهيز المراكب واليخوت.">Repair, maintenance, restoration and preparation for boats and yachts.</p><a href="#service-details" class="service-btn"
+  <p data-en="Repair, maintenance, restoration and preparation for boats and yachts." data-ar="إصلاح وصيانة وتجديد وتجهيز المراكب واليخوت.">Repair, maintenance, restoration and preparation for boats and yachts.</p>
+   <a href="#service-details" class="service-btn"
+   data-service="repair"
    data-en="View Details →"
    data-ar="عرض التفاصيل ←">View Details →</a>
 </article>
  <article>
   <i>🛠</i>
   <h3 data-en="Custom Boat Building" data-ar="تصنيع المراكب حسب الطلب">Custom Boat Building</h3>
-  <p data-en="Building boats from the ground up, with custom fittings and modifications based on your needs." data-ar="تصنيع المراكب من البداية وتنفيذ التجهيزات والتعديلات حسب احتياجك.">Building boats from the ground up, with custom fittings and modifications based on your needs.</p><a href="#service-details" class="service-btn"
+  <p data-en="Building boats from the ground up, with custom fittings and modifications based on your needs." data-ar="تصنيع المراكب من البداية وتنفيذ التجهيزات والتعديلات حسب احتياجك.">Building boats from the ground up, with custom fittings and modifications based on your needs.</p>
+   <a href="#service-details" class="service-btn"
+   data-service="custom"
    data-en="View Details →"
    data-ar="عرض التفاصيل ←">View Details →</a>
 </article>
@@ -452,7 +458,9 @@ body.rtl .control select{
     </svg>
   </i>
   <h3 data-en="Driving License Services" data-ar="خدمات رخص قيادة المراكب">Driving License Services</h3>
-  <p data-en="Boat and yacht driving license services for individuals." data-ar="خدمات رخص قيادة المراكب واليخوت للأفراد.">Boat and yacht driving license services for individuals.</p><a href="#service-details" class="service-btn"
+  <p data-en="Boat and yacht driving license services for individuals." data-ar="خدمات رخص قيادة المراكب واليخوت للأفراد.">Boat and yacht driving license services for individuals.</p>
+ <a href="#service-details" class="service-btn"
+   data-service="license"
    data-en="View Details →"
    data-ar="عرض التفاصيل ←">View Details →</a>
 </article>
@@ -498,47 +506,6 @@ body.rtl .control select{
     </div>
 
 </div>
-</section>
-
-<section class="service-details" id="service-details">
-  <div class="service-details-inner">
-
-    <div class="service-details-media">
-      <div class="service-details-placeholder" id="service-detail-media">
-        PROMISE MARINE
-      </div>
-    </div>
-
-    <div class="service-details-copy">
-      <p class="eyebrow" data-en="PROMISE MARINE" data-ar="مرسى بروميس">PROMISE MARINE</p>
-      <h2 id="service-detail-title"
-    data-en="Marine Services"
-    data-ar="الخدمات البحرية">
-  Marine Services
-</h2>
-
-<p id="service-detail-text"
-   data-en="Berthing, boat care and marine support."
-   data-ar="رسو المراكب والعناية بها والدعم البحري.">
-  Berthing, boat care and marine support.
-</p>
-
-<div class="service-detail-note"
-     id="service-detail-note"
-     data-en="Real project photos will be added here."
-     data-ar="سيتم إضافة صور الأعمال الحقيقية هنا.">
-  Real project photos will be added here.
-</div>
-
-<a href="#services"
-   class="service-back"
-   data-en="← Back to Services"
-   data-ar="→ العودة للخدمات">
-  ← Back to Services
-</a>
-
-    </div>
-  </div>
 </section>
 
 <section class="split" id="renovation">
@@ -1692,6 +1659,94 @@ const priceAr =
 
   renderListingCards();
 }
+  
+  /* --------------------------------------------------
+   SERVICES DETAILS
+-------------------------------------------------- */
+
+const serviceData = {
+  marine: {
+    enTitle: "Marine Services",
+    arTitle: "الخدمات البحرية",
+
+    enText: "Berthing, boat care and marine support.",
+    arText: "رسو المراكب والعناية بها والدعم البحري."
+  },
+
+  repair: {
+    enTitle: "Boat Repair, Maintenance & Restoration",
+    arTitle: "إصلاح وصيانة وتجديد المراكب",
+
+    enText: "Repair, maintenance, restoration and preparation for boats and yachts.",
+    arText: "إصلاح وصيانة وتجديد وتجهيز المراكب واليخوت."
+  },
+
+  custom: {
+    enTitle: "Custom Boat Building",
+    arTitle: "تصنيع المراكب حسب الطلب",
+
+    enText: "Building boats from the ground up, with custom fittings and modifications based on your needs.",
+    arText: "تصنيع المراكب من البداية وتنفيذ التجهيزات والتعديلات حسب احتياجك."
+  },
+
+  license: {
+    enTitle: "Driving License Services",
+    arTitle: "خدمات رخص قيادة المراكب",
+
+    enText: "Boat and yacht driving license services for individuals.",
+    arText: "خدمات رخص قيادة المراكب واليخوت للأفراد."
+  }
+};
+
+const serviceDetailsSection =
+  document.getElementById("service-details");
+
+const serviceDetailTitle =
+  document.getElementById("service-detail-title");
+
+const serviceDetailText =
+  document.getElementById("service-detail-text");
+
+document.querySelectorAll(".service-btn").forEach(button => {
+
+  button.addEventListener("click", event => {
+
+    event.preventDefault();
+
+    const key = button.dataset.service;
+    const service = serviceData[key];
+
+    if (!service) return;
+
+    const isArabic =
+      document.documentElement.lang === "ar";
+
+    serviceDetailTitle.dataset.en = service.enTitle;
+    serviceDetailTitle.dataset.ar = service.arTitle;
+
+    serviceDetailText.dataset.en = service.enText;
+    serviceDetailText.dataset.ar = service.arText;
+
+    serviceDetailTitle.textContent =
+      isArabic
+        ? service.arTitle
+        : service.enTitle;
+
+    serviceDetailText.textContent =
+      isArabic
+        ? service.arText
+        : service.enText;
+
+    serviceDetailsSection.classList.add("active");
+
+    serviceDetailsSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+  });
+
+});
 
 /* --------------------------------------------------
    INITIAL LANGUAGE
