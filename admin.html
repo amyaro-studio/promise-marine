@@ -1561,15 +1561,49 @@ async function loadServiceMedia(serviceId) {
 
     return;
   }
+  const uploadBox = document.createElement("div");
+
+  uploadBox.className = "service-upload-box";
+
+  uploadBox.innerHTML = `
+
+    <label>
+      إضافة صور وفيديوهات للخدمة
+    </label>
+
+    <input
+      type="file"
+      id="service-files-${service.id}"
+      accept="image/*,video/*"
+      multiple
+    >
+
+    <button
+      class="success"
+      onclick="uploadServiceMedia(${service.id})"
+    >
+      رفع الملفات
+    </button>
+
+  `;
+
+  container.innerHTML = "";
+  container.appendChild(uploadBox);
 
   if (!media || media.length === 0) {
 
-    container.innerHTML =
-      '<div class="boat-info">لا توجد صور أو فيديوهات للخدمة حتى الآن.</div>';
+    const empty =
+      document.createElement("div");
+
+    empty.className = "boat-info";
+
+    empty.textContent =
+      "لا توجد صور أو فيديوهات للخدمة حتى الآن.";
+
+    container.appendChild(empty);
 
     return;
   }
-
   const grid =
     document.createElement("div");
 
@@ -1633,6 +1667,129 @@ async function loadServiceMedia(serviceId) {
 
   container.innerHTML = "";
   container.appendChild(grid);
+
+}
+  // =========================
+// UPLOAD SERVICE MEDIA
+// =========================
+
+async function uploadServiceMedia(serviceId) {
+
+  const input =
+    document.getElementById(
+      "service-files-" + serviceId
+    );
+
+  if (!input || !input.files.length) {
+
+    alert("اختاري صورة أو فيديو أولًا.");
+
+    return;
+  }
+
+  const service =
+    await getServiceById(serviceId);
+
+  if (!service) {
+
+    alert("لم يتم العثور على الخدمة.");
+
+    return;
+  }
+
+  const files =
+    Array.from(input.files);
+
+  for (let i = 0; i < files.length; i++) {
+
+    const file = files[i];
+
+    const extension =
+      file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+    const safeName =
+      Date.now() +
+      "_" +
+      i +
+      "_" +
+      file.name
+        .replace(/\.[^/.]+$/, "")
+        .replace(/[^a-zA-Z0-9_-]/g, "_") +
+      "." +
+      extension;
+
+    const filePath =
+      service.service_key +
+      "/" +
+      safeName;
+
+    const { error: uploadError } =
+      await supabaseClient
+        .storage
+        .from("service-media")
+        .upload(
+          filePath,
+          file
+        );
+
+    if (uploadError) {
+
+      alert(
+        "حصل خطأ أثناء رفع الملف:\n" +
+        uploadError.message
+      );
+
+      return;
+    }
+
+    const { data: publicData } =
+      supabaseClient
+        .storage
+        .from("service-media")
+        .getPublicUrl(filePath);
+
+    const mediaUrl =
+      publicData.publicUrl;
+
+    const isVideo =
+      file.type.startsWith("video/");
+
+    const { error: dbError } =
+      await supabaseClient
+        .from("service_media")
+        .insert({
+
+          service_key:
+            service.service_key,
+
+          media_url:
+            mediaUrl,
+
+          is_video:
+            isVideo
+
+        });
+
+    if (dbError) {
+
+      alert(
+        "تم رفع الملف لكن حصل خطأ في تسجيله:\n" +
+        dbError.message
+      );
+
+      return;
+    }
+
+  }
+
+  alert("تم رفع الملفات بنجاح.");
+
+  input.value = "";
+
+  await loadServiceMedia(serviceId);
 
 }
 
