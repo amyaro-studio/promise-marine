@@ -305,6 +305,16 @@
       <div id="result"></div>
 
     </div>
+    <!-- SERVICES -->
+<div class="box">
+
+  <h2>Services</h2>
+
+  <div id="servicesAdminList">
+    جاري تحميل الخدمات...
+  </div>
+
+</div>
 
 
     <!-- BOATS -->
@@ -400,20 +410,20 @@
   // SHOW ADMIN
   // =========================
 
-  function showAdmin() {
+function showAdmin() {
 
-    document
-      .getElementById("loginBox")
-      .classList.add("hidden");
+  document
+    .getElementById("loginBox")
+    .classList.add("hidden");
 
-    document
-      .getElementById("adminBox")
-      .classList.remove("hidden");
+  document
+    .getElementById("adminBox")
+    .classList.remove("hidden");
 
-    loadBoats();
+  loadBoats();
+  loadServicesAdmin();
 
-  }
-
+}
 
   // =========================
   // LOGOUT
@@ -1340,6 +1350,319 @@ const safeName =
       .replace(/\r/g, "\\r");
 
   }
+  // =========================
+// SERVICES ADMIN
+// =========================
+
+async function loadServicesAdmin() {
+
+  const list =
+    document.getElementById("servicesAdminList");
+
+  if (!list) return;
+
+  list.innerHTML =
+    '<div class="message">جاري تحميل الخدمات...</div>';
+
+  const { data: services, error } =
+    await supabaseClient
+      .from("services")
+      .select("*")
+      .order("id", {
+        ascending: true
+      });
+
+  if (error) {
+
+    list.innerHTML =
+      '<div class="message">خطأ في تحميل الخدمات:\n' +
+      error.message +
+      '</div>';
+
+    return;
+  }
+
+  if (!services || services.length === 0) {
+
+    list.innerHTML =
+      '<div class="message">لا توجد خدمات.</div>';
+
+    return;
+  }
+
+  list.innerHTML = "";
+
+  services.forEach(service => {
+
+    const card =
+      document.createElement("div");
+
+    card.className = "boat-card";
+
+    card.innerHTML = `
+
+      <h3>
+        ${escapeHtml(service.title_ar || "")}
+        /
+        ${escapeHtml(service.title_en || "")}
+      </h3>
+
+      <div class="boat-info">
+        <strong>Service Key:</strong>
+        ${escapeHtml(service.service_key || "-")}
+      </div>
+
+      <div class="edit-box">
+
+        <label>اسم الخدمة بالعربي</label>
+
+        <input
+          id="service-title-ar-${service.id}"
+          value="${escapeAttribute(service.title_ar || "")}"
+        >
+
+        <label>Service Name in English</label>
+
+        <input
+          id="service-title-en-${service.id}"
+          value="${escapeAttribute(service.title_en || "")}"
+        >
+
+        <label>الوصف بالعربي</label>
+
+        <textarea
+          id="service-description-ar-${service.id}"
+        >${escapeHtml(service.description_ar || "")}</textarea>
+
+        <label>Description in English</label>
+
+        <textarea
+          id="service-description-en-${service.id}"
+        >${escapeHtml(service.description_en || "")}</textarea>
+
+        <button
+          class="success"
+          onclick="saveService(${service.id})"
+        >
+          Save Service
+        </button>
+
+      </div>
+
+      <div id="service-media-${service.id}">
+        جاري تحميل الصور والفيديوهات...
+      </div>
+
+    `;
+
+    list.appendChild(card);
+
+    loadServiceMedia(service.id);
+
+  });
+
+}
+
+
+// =========================
+// SAVE SERVICE
+// =========================
+
+async function saveService(serviceId) {
+
+  const titleAr =
+    document.getElementById(
+      "service-title-ar-" + serviceId
+    ).value.trim();
+
+  const titleEn =
+    document.getElementById(
+      "service-title-en-" + serviceId
+    ).value.trim();
+
+  const descriptionAr =
+    document.getElementById(
+      "service-description-ar-" + serviceId
+    ).value.trim();
+
+  const descriptionEn =
+    document.getElementById(
+      "service-description-en-" + serviceId
+    ).value.trim();
+
+  if (!titleAr || !titleEn) {
+
+    alert(
+      "اكتبي اسم الخدمة بالعربي والإنجليزي."
+    );
+
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("services")
+      .update({
+        title_ar: titleAr,
+        title_en: titleEn,
+        description_ar: descriptionAr,
+        description_en: descriptionEn
+      })
+      .eq("id", serviceId);
+
+  if (error) {
+
+    alert(
+      "حصل خطأ أثناء حفظ الخدمة:\n" +
+      error.message
+    );
+
+    return;
+  }
+
+  alert("تم حفظ الخدمة بنجاح.");
+
+  await loadServicesAdmin();
+
+}
+
+
+// =========================
+// LOAD SERVICE MEDIA
+// =========================
+
+async function loadServiceMedia(serviceId) {
+
+  const container =
+    document.getElementById(
+      "service-media-" + serviceId
+    );
+
+  if (!container) return;
+
+  const service =
+    await getServiceById(serviceId);
+
+  if (!service) return;
+
+  const { data: media, error } =
+    await supabaseClient
+      .from("service_media")
+      .select("*")
+      .eq("service_key", service.service_key)
+      .order("id", {
+        ascending: true
+      });
+
+  if (error) {
+
+    container.innerHTML =
+      '<div class="message">خطأ في تحميل ملفات الخدمة.</div>';
+
+    return;
+  }
+
+  if (!media || media.length === 0) {
+
+    container.innerHTML =
+      '<div class="boat-info">لا توجد صور أو فيديوهات للخدمة حتى الآن.</div>';
+
+    return;
+  }
+
+  const grid =
+    document.createElement("div");
+
+  grid.className = "media-grid";
+
+  media.forEach(item => {
+
+    const div =
+      document.createElement("div");
+
+    div.className = "media-item";
+
+    if (item.is_video) {
+
+      div.innerHTML = `
+
+        <video
+          src="${item.media_url}"
+          controls
+          muted
+        ></video>
+
+        <button
+          class="danger"
+          onclick="deleteServiceMedia(
+            ${item.id},
+            '${escapeJs(item.media_url)}'
+          )"
+        >
+          حذف الفيديو
+        </button>
+
+      `;
+
+    } else {
+
+      div.innerHTML = `
+
+        <img
+          src="${item.media_url}"
+          alt="Service media"
+        >
+
+        <button
+          class="danger"
+          onclick="deleteServiceMedia(
+            ${item.id},
+            '${escapeJs(item.media_url)}'
+          )"
+        >
+          حذف الصورة
+        </button>
+
+      `;
+
+    }
+
+    grid.appendChild(div);
+
+  });
+
+  container.innerHTML = "";
+  container.appendChild(grid);
+
+}
+
+
+// =========================
+// GET SERVICE
+// =========================
+
+async function getServiceById(serviceId) {
+
+  const { data, error } =
+    await supabaseClient
+      .from("services")
+      .select("*")
+      .eq("id", serviceId)
+      .single();
+
+  if (error) {
+
+    console.error(
+      "Error loading service:",
+      error.message
+    );
+
+    return null;
+  }
+
+  return data;
+
+}
 
 
   // =========================
