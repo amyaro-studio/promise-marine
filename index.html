@@ -156,24 +156,26 @@ footer{
   min-height:420px;
   width:100%;
   max-width:100%;
+  min-width:0;
   overflow:hidden;
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
 }
 
 .service-details-media img,
 .service-details-media video{
-  display:block;
-  width:100%;
-  max-width:100%;
-  height:260px;
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  height:320px !important;
   object-fit:cover;
   border-radius:12px;
   background:#dce2df;
+  flex:0 0 auto;
 }
-
-.service-details-media .service-details-placeholder{
+  .service-details-placeholder{
   grid-column:1 / -1;
   width:100%;
   max-width:100%;
