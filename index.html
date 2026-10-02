@@ -153,27 +153,53 @@ footer{
 }
 
 .service-details-media{
-  min-height:420px;
   width:100%;
   max-width:100%;
   min-width:0;
+  min-height:0;
   overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
+  position:relative;
 }
 
-.service-details-media img,
-.service-details-media video{
-  display:block !important;
-  width:100% !important;
-  max-width:100% !important;
-  min-width:0 !important;
-  height:320px !important;
-  object-fit:cover;
+.service-details-media-track{
+  display:flex;
+  gap:14px;
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  align-items:flex-start;
+  padding-bottom:8px;
+}
+
+.service-details-media-track::-webkit-scrollbar{
+  display:none;
+}
+
+.service-details-media-item{
+  flex:0 0 100%;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  scroll-snap-align:start;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+}
+
+.service-details-media-item img,
+.service-details-media-item video{
+  display:block;
+  width:auto;
+  max-width:100%;
+  height:auto;
+  max-height:520px;
   border-radius:12px;
   background:#dce2df;
-  flex:0 0 auto;
+  object-fit:contain;
 }
   .service-details-placeholder{
   grid-column:1 / -1;
@@ -1819,36 +1845,51 @@ const priceAr =
     return;
   }
 
-  mediaBox.innerHTML = "";
+mediaBox.innerHTML = "";
 
-  media.forEach(item => {
+const track =
+  document.createElement("div");
 
-    if (item.is_video) {
+track.className =
+  "service-details-media-track";
 
-      const video =
-        document.createElement("video");
+mediaBox.appendChild(track);
 
-      video.src = item.media_url;
-      video.controls = true;
-      video.muted = true;
-      video.playsInline = true;
-      video.preload = "metadata";
+media.forEach(item => {
 
-      mediaBox.appendChild(video);
+  const slide =
+    document.createElement("div");
 
-    } else {
+  slide.className =
+    "service-details-media-item";
 
-      const img =
-        document.createElement("img");
+  if (item.is_video) {
 
-      img.src = item.media_url;
-      img.alt = "PROMISE MARINE";
+    const video =
+      document.createElement("video");
 
-      mediaBox.appendChild(img);
-    }
+    video.src = item.media_url;
+    video.controls = true;
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "metadata";
 
-  });
+    slide.appendChild(video);
 
+  } else {
+
+    const img =
+      document.createElement("img");
+
+    img.src = item.media_url;
+    img.alt = "PROMISE MARINE";
+
+    slide.appendChild(img);
+  }
+
+  track.appendChild(slide);
+
+});
 }
 const serviceData = {
   marine: {
