@@ -154,6 +154,29 @@ footer{
 
 .service-details-media{
   min-height:420px;
+  width:100%;
+  max-width:100%;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.service-details-media img,
+.service-details-media video{
+  display:block;
+  width:100%;
+  max-width:100%;
+  height:260px;
+  object-fit:cover;
+  border-radius:12px;
+  background:#dce2df;
+}
+
+.service-details-media .service-details-placeholder{
+  grid-column:1 / -1;
+  width:100%;
+  max-width:100%;
 }
 
 .service-details-placeholder{
@@ -214,6 +237,32 @@ footer{
 @media(max-width:560px){
   .service-details{
     padding:60px 5%;
+    overflow:hidden;
+  }
+
+  .service-details-inner{
+    width:100%;
+    max-width:100%;
+  }
+
+  .service-details-media{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  .service-details-media img,
+  .service-details-media video{
+    width:100%;
+    max-width:100%;
+    height:240px;
+  }
+
+  .service-details-copy{
+    min-width:0;
+    max-width:100%;
   }
 
   .service-details-copy h2{
