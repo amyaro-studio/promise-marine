@@ -1546,15 +1546,15 @@ async function loadServiceMedia(serviceId) {
   if (!service) return;
 
   const { data: media, error } =
-    await supabaseClient
-      .from("service_media")
-      .select("*")
-      .eq("service_key", service.service_key)
-      .order("id", {
-        ascending: true
-      });
+  await supabaseClient
+    .from("service_media")
+    .select("*")
+    .eq("service_key", service.service_key)
+    .order("sort_order", {
+      ascending: true
+    });
 
-  if (error) {
+if (error) {
 
     container.innerHTML =
       '<div class="message">خطأ في تحميل ملفات الخدمة.</div>';
