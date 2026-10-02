@@ -1728,6 +1728,77 @@ const priceAr =
   /* --------------------------------------------------
    SERVICES DETAILS
 -------------------------------------------------- */
+  async function loadServiceMediaPublic(serviceKey) {
+
+  const mediaBox =
+    document.getElementById("service-detail-media");
+
+  if (!mediaBox) return;
+
+  mediaBox.innerHTML =
+    '<div class="service-details-placeholder">جاري تحميل الصور والفيديوهات...</div>';
+
+  const { data: media, error } =
+    await supabaseClient
+      .from("service_media")
+      .select("*")
+      .eq("service_key", serviceKey)
+      .order("id", {
+        ascending: true
+      });
+
+  if (error) {
+
+    console.error(
+      "Service media error:",
+      error.message
+    );
+
+    mediaBox.innerHTML =
+      '<div class="service-details-placeholder">تعذر تحميل صور وفيديوهات الخدمة.</div>';
+
+    return;
+  }
+
+  if (!media || media.length === 0) {
+
+    mediaBox.innerHTML =
+      '<div class="service-details-placeholder">PROMISE MARINE</div>';
+
+    return;
+  }
+
+  mediaBox.innerHTML = "";
+
+  media.forEach(item => {
+
+    if (item.is_video) {
+
+      const video =
+        document.createElement("video");
+
+      video.src = item.media_url;
+      video.controls = true;
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = "metadata";
+
+      mediaBox.appendChild(video);
+
+    } else {
+
+      const img =
+        document.createElement("img");
+
+      img.src = item.media_url;
+      img.alt = "PROMISE MARINE";
+
+      mediaBox.appendChild(img);
+    }
+
+  });
+
+}
 const serviceData = {
   marine: {
     enTitle: "Marine Services",
@@ -1772,6 +1843,8 @@ document.querySelectorAll(".service-btn").forEach(button => {
     const service = serviceData[key];
 
     if (!service) return;
+
+    loadServiceMediaPublic(key);
 
     const isArabic =
       document.documentElement.lang === "ar";
