@@ -1791,6 +1791,101 @@ async function uploadServiceMedia(serviceId) {
   await loadServiceMedia(serviceId);
 
 }
+  // =========================
+// DELETE SERVICE MEDIA
+// =========================
+
+async function deleteServiceMedia(mediaId, mediaUrl) {
+
+  if (!confirm("هل تريدين حذف هذا الملف؟")) {
+    return;
+  }
+
+  // Get the media record first
+  const { data: mediaItem, error: mediaError } =
+    await supabaseClient
+      .from("service_media")
+      .select("service_key")
+      .eq("id", mediaId)
+      .single();
+
+  if (mediaError || !mediaItem) {
+
+    alert(
+      "لم يتم العثور على الملف:\n" +
+      (mediaError?.message || "")
+    );
+
+    return;
+  }
+
+  const serviceKey = mediaItem.service_key;
+
+  // Delete from database
+  const { error: dbError } =
+    await supabaseClient
+      .from("service_media")
+      .delete()
+      .eq("id", mediaId);
+
+  if (dbError) {
+
+    alert(
+      "حصل خطأ أثناء حذف الملف:\n" +
+      dbError.message
+    );
+
+    return;
+  }
+
+  // Delete from Storage
+  const marker = "/service-media/";
+
+  const markerIndex =
+    mediaUrl.indexOf(marker);
+
+  if (markerIndex !== -1) {
+
+    const filePath =
+      decodeURIComponent(
+        mediaUrl.substring(
+          markerIndex + marker.length
+        )
+      );
+
+    const { error: storageError } =
+      await supabaseClient
+        .storage
+        .from("service-media")
+        .remove([filePath]);
+
+    if (storageError) {
+
+      console.warn(
+        "تم حذف السجل من قاعدة البيانات، لكن تعذر حذف الملف من Storage:",
+        storageError.message
+      );
+    }
+  }
+
+  // Get service ID
+  const { data: service, error: serviceError } =
+    await supabaseClient
+      .from("services")
+      .select("id")
+      .eq("service_key", serviceKey)
+      .single();
+
+  if (serviceError || !service) {
+
+    alert("تم حذف الملف، لكن تعذر تحديث قائمة الميديا.");
+
+    return;
+  }
+
+  await loadServiceMedia(service.id);
+
+}
 
 
 // =========================
