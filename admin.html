@@ -1604,10 +1604,32 @@ async function loadServiceMedia(serviceId) {
 
     return;
   }
-  const grid =
-    document.createElement("div");
+ const actions = document.createElement("div");
 
-  grid.className = "media-grid";
+actions.className = "media-actions";
+
+actions.innerHTML = `
+  <button
+    class="danger"
+    onclick="deleteSelectedServiceMedia(${service.id})"
+  >
+    حذف المحدد
+  </button>
+
+  <button
+    class="danger"
+    onclick="deleteAllServiceMedia(${service.id})"
+  >
+    حذف الكل
+  </button>
+`;
+
+container.appendChild(actions);
+
+const grid =
+  document.createElement("div");
+
+grid.className = "media-grid";
 
   media.forEach(item => {
 
@@ -1616,32 +1638,46 @@ async function loadServiceMedia(serviceId) {
 
     div.className = "media-item";
 
-    if (item.is_video) {
+   const checkbox =
+  document.createElement("input");
 
-      div.innerHTML = `
+checkbox.type = "checkbox";
+checkbox.className =
+  "service-media-checkbox";
 
-       <video
-  src="${item.media_url}"
-  controls
-  muted
-  preload="metadata"
-></video>
-        <button
-          class="danger"
-          onclick="deleteServiceMedia(
-            ${item.id},
-            '${escapeJs(item.media_url)}'
-          )"
-        >
-          حذف الفيديو
-        </button>
+checkbox.dataset.mediaId =
+  item.id;
 
-      `;
+checkbox.dataset.mediaUrl =
+  item.media_url;
 
-    } else {
+div.appendChild(checkbox);
+  if (item.is_video) {
 
-      div.innerHTML = `
+  div.insertAdjacentHTML("beforeend", `
 
+    <video
+      src="${item.media_url}"
+      controls
+      muted
+      preload="metadata"
+    ></video>
+
+    <button
+      class="danger"
+      onclick="deleteServiceMedia(
+        ${item.id},
+        '${escapeJs(item.media_url)}'
+      )"
+    >
+      حذف الفيديو
+    </button>
+
+  `);
+
+} else {
+
+div.insertAdjacentHTML("beforeend", `
         <img
           src="${item.media_url}"
           alt="Service media"
@@ -1657,17 +1693,201 @@ async function loadServiceMedia(serviceId) {
           حذف الصورة
         </button>
 
-      `;
+      `);
 
     }
 
     grid.appendChild(div);
-
   });
 
   container.appendChild(grid);
 
 }
+  
+// =========================
+// DELETE SELECTED SERVICE MEDIA
+// =========================
+async function deleteSelectedServiceMedia(serviceId) {
+
+  const selected =
+    Array.from(
+      document.querySelectorAll(
+        "#service-media-" + serviceId +
+        " .service-media-checkbox:checked"
+      )
+    );
+
+  if (!selected.length) {
+
+    alert(
+      "اختاري الملفات التي تريدين حذفها أولًا."
+    );
+
+    return;
+  }
+
+  if (!confirm(
+    "هل تريدين حذف الملفات المحددة؟"
+  )) {
+    return;
+  }
+
+  for (const checkbox of selected) {
+
+    const mediaId =
+      Number(checkbox.dataset.mediaId);
+
+    const mediaUrl =
+      checkbox.dataset.mediaUrl;
+
+    const { error: dbError } =
+      await supabaseClient
+        .from("service_media")
+        .delete()
+        .eq("id", mediaId);
+
+    if (dbError) {
+
+      console.error(
+        "Delete error:",
+        dbError.message
+      );
+
+      continue;
+    }
+
+    const marker =
+      "/service-media/";
+
+    const markerIndex =
+      mediaUrl.indexOf(marker);
+
+    if (markerIndex !== -1) {
+
+      const filePath =
+        decodeURIComponent(
+          mediaUrl.substring(
+            markerIndex + marker.length
+          )
+        );
+
+      await supabaseClient
+        .storage
+        .from("service-media")
+        .remove([filePath]);
+    }
+
+  }
+
+  alert("تم حذف الملفات المحددة.");
+
+  await loadServiceMedia(serviceId);
+
+}
+
+  // =========================
+// DELETE ALL SERVICE MEDIA
+// =========================
+async function deleteAllServiceMedia(serviceId) {
+
+  if (!confirm(
+    "هل تريدين حذف جميع الصور والفيديوهات لهذه الخدمة؟"
+  )) {
+    return;
+  }
+
+  const service =
+    await getServiceById(serviceId);
+
+  if (!service) {
+
+    alert("لم يتم العثور على الخدمة.");
+
+    return;
+  }
+    const { data: media, error } =
+    await supabaseClient
+      .from("service_media")
+      .select("id, media_url")
+      .eq("service_key", service.service_key);
+
+  if (error) {
+
+    alert(
+      "حصل خطأ أثناء تحميل الملفات:\n" +
+      error.message
+    );
+
+    return;
+  }
+    if (!media || media.length === 0) {
+
+    alert("لا توجد ملفات لحذفها.");
+
+    return;
+  }
+
+  const filePaths = [];
+
+  media.forEach(item => {
+
+    const marker =
+      "/service-media/";
+
+    const markerIndex =
+      item.media_url.indexOf(marker);
+
+    if (markerIndex !== -1) {
+
+      const filePath =
+        decodeURIComponent(
+          item.media_url.substring(
+            markerIndex + marker.length
+           )
+        );
+
+      filePaths.push(filePath);
+    }
+
+  });
+    const { error: dbError } =
+    await supabaseClient
+      .from("service_media")
+      .delete()
+      .eq("service_key", service.service_key);
+
+  if (dbError) {
+
+    alert(
+      "حصل خطأ أثناء حذف الملفات:\n" +
+      dbError.message
+    );
+
+    return;
+  }
+    if (filePaths.length > 0) {
+
+    const { error: storageError } =
+      await supabaseClient
+        .storage
+        .from("service-media")
+        .remove(filePaths);
+
+    if (storageError) {
+
+      console.warn(
+        "تم حذف سجلات الملفات، لكن حدث خطأ في حذف بعض الملفات من Storage:",
+        storageError.message
+      );
+    }
+  }
+
+  alert("تم حذف جميع ملفات الخدمة.");
+
+  await loadServiceMedia(serviceId);
+
+}
+  
   // =========================
 // UPLOAD SERVICE MEDIA
 // =========================
