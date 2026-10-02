@@ -1620,12 +1620,12 @@ async function loadServiceMedia(serviceId) {
 
       div.innerHTML = `
 
-        <video
-          src="${item.media_url}"
-          controls
-          muted
-        ></video>
-
+       <video
+  src="${item.media_url}"
+  controls
+  muted
+  preload="metadata"
+></video>
         <button
           class="danger"
           onclick="deleteServiceMedia(
