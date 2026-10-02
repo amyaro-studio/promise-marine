@@ -133,6 +133,10 @@
       padding-bottom: 8px;
     }
 
+    .media-item.dragging {
+  opacity: 0.5;
+}
+    
     .media-item img,
     .media-item video {
       width: 100%;
@@ -1610,6 +1614,13 @@ actions.className = "media-actions";
 
 actions.innerHTML = `
   <button
+    class="success"
+    onclick="saveServiceMediaOrder(${service.id})"
+  >
+    حفظ الترتيب
+  </button>
+
+  <button
     class="danger"
     onclick="deleteSelectedServiceMedia(${service.id})"
   >
@@ -1623,7 +1634,6 @@ actions.innerHTML = `
     حذف الكل
   </button>
 `;
-
 container.appendChild(actions);
 
 const grid =
@@ -1637,6 +1647,18 @@ grid.className = "media-grid";
       document.createElement("div");
 
     div.className = "media-item";
+    div.draggable = true;
+
+div.dataset.mediaId =
+  item.id;
+
+div.addEventListener("dragstart", () => {
+  div.classList.add("dragging");
+});
+
+div.addEventListener("dragend", () => {
+  div.classList.remove("dragging");
+});
 
    const checkbox =
   document.createElement("input");
@@ -1700,7 +1722,122 @@ div.insertAdjacentHTML("beforeend", `
     grid.appendChild(div);
   });
 
+   grid.addEventListener("dragover", (event) => {
+
+    event.preventDefault();
+
+    const dragging =
+      grid.querySelector(".dragging");
+
+    if (!dragging) return;
+
+    const afterElement =
+      getDragAfterElement(
+        grid,
+        event.clientY
+      );
+
+    if (afterElement == null) {
+
+      grid.appendChild(dragging);
+
+    } else {
+
+      grid.insertBefore(
+        dragging,
+        afterElement
+      );
+
+    }
+
+  });
+
   container.appendChild(grid);
+
+}
+
+  async function saveServiceMediaOrder(serviceId) {
+
+  const grid =
+    document.querySelector(
+      "#service-media-" +
+      serviceId +
+      " .media-grid"
+    );
+
+  if (!grid) return;
+
+  const items =
+    Array.from(
+      grid.querySelectorAll(".media-item")
+    );
+
+  for (let i = 0; i < items.length; i++) {
+
+    const mediaId =
+      Number(
+        items[i].dataset.mediaId
+      );
+
+    const { error } =
+      await supabaseClient
+        .from("service_media")
+        .update({
+          sort_order: i + 1
+        })
+        .eq("id", mediaId);
+
+    if (error) {
+
+      alert(
+        "حصل خطأ أثناء حفظ الترتيب:\n" +
+        error.message
+      );
+
+      return;
+    }
+  }
+
+  alert("تم حفظ الترتيب.");
+}
+
+  function getDragAfterElement(container, y) {
+
+  const draggableElements =
+    [
+      ...container.querySelectorAll(
+        ".media-item:not(.dragging)"
+      )
+    ];
+
+  return draggableElements.reduce(
+    (closest, child) => {
+
+      const box =
+        child.getBoundingClientRect();
+
+      const offset =
+        y -
+        box.top -
+        box.height / 2;
+
+      if (
+        offset < 0 &&
+        offset > closest.offset
+      ) {
+        return {
+          offset: offset,
+          element: child
+        };
+      }
+
+      return closest;
+
+    },
+    {
+      offset: Number.NEGATIVE_INFINITY
+    }
+  ).element;
 
 }
   
