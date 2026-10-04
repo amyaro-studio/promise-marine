@@ -1803,92 +1803,107 @@ const priceAr =
   /* --------------------------------------------------
    SERVICES DETAILS
 -------------------------------------------------- */
-  async function loadServiceMediaPublic(serviceKey) {
-
-  const mediaBox =
-    document.getElementById("service-detail-media");
-
+  let serviceVideoMuted = true;
+async function loadServiceMediaPublic(serviceKey) {
+  const mediaBox = document.getElementById("service-detail-media");
   if (!mediaBox) return;
+
+  // إيقاف أي فيديو قديم قبل تحميل خدمة جديدة
+  mediaBox.querySelectorAll("video").forEach(video => video.pause());
 
   mediaBox.innerHTML =
     '<div class="service-details-placeholder">جاري تحميل الصور والفيديوهات...</div>';
 
-  const { data: media, error } =
-    await supabaseClient
-      .from("service_media")
-      .select("*")
-      .eq("service_key", serviceKey)
-      .order("id", {
-        ascending: true
-      });
+  const { data: media, error } = await supabaseClient
+    .from("service_media")
+    .select("*")
+    .eq("service_key", serviceKey)
+    .order("id", { ascending: true });
 
   if (error) {
-
-    console.error(
-      "Service media error:",
-      error.message
-    );
-
+    console.error("Service media error:", error.message);
     mediaBox.innerHTML =
       '<div class="service-details-placeholder">تعذر تحميل صور وفيديوهات الخدمة.</div>';
-
     return;
   }
 
   if (!media || media.length === 0) {
-
     mediaBox.innerHTML =
       '<div class="service-details-placeholder">PROMISE MARINE</div>';
-
     return;
   }
 
-mediaBox.innerHTML = "";
+  mediaBox.innerHTML = "";
 
-const track =
-  document.createElement("div");
+  const track = document.createElement("div");
+  track.className = "service-details-media-track";
+  mediaBox.appendChild(track);
 
-track.className =
-  "service-details-media-track";
+  const videos = [];
 
-mediaBox.appendChild(track);
+  media.forEach(item => {
+    const slide = document.createElement("div");
+    slide.className = "service-details-media-item";
 
-media.forEach(item => {
+    if (item.is_video) {
+      const video = document.createElement("video");
 
-  const slide =
-    document.createElement("div");
+      video.src = item.media_url;
+      video.controls = true;
+      video.muted = serviceVideoMuted;
+      video.playsInline = true;
+      video.preload = "metadata";
 
-  slide.className =
-    "service-details-media-item";
+      videos.push(video);
 
-  if (item.is_video) {
+      // لو بدأ فيديو، أوقف كل الفيديوهات الأخرى
+      video.addEventListener("play", () => {
+        videos.forEach(otherVideo => {
+          if (otherVideo !== video) otherVideo.pause();
+        });
+      });
 
-    const video =
-      document.createElement("video");
+      // توحيد حالة الصوت عند الضغط على زر الصوت
+      video.addEventListener("volumechange", () => {
+        serviceVideoMuted = video.muted;
 
-    video.src = item.media_url;
-    video.controls = true;
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = "metadata";
+        videos.forEach(otherVideo => {
+          if (otherVideo !== video) {
+            otherVideo.muted = serviceVideoMuted;
+          }
+        });
+      });
 
-    slide.appendChild(video);
+      slide.appendChild(video);
+    } else {
+      const img = document.createElement("img");
+      img.src = item.media_url;
+      img.alt = "PROMISE MARINE";
+      slide.appendChild(img);
+    }
 
-  } else {
+    track.appendChild(slide);
+  });
 
-    const img =
-      document.createElement("img");
+  // إيقاف الفيديو إذا انتقلت الشريحة بعيدًا عن الشاشة
+  track.addEventListener("scroll", () => {
+    const trackRect = track.getBoundingClientRect();
 
-    img.src = item.media_url;
-    img.alt = "PROMISE MARINE";
+    videos.forEach(video => {
+      const rect = video.getBoundingClientRect();
+      const visibleWidth = Math.max(
+        0,
+        Math.min(rect.right, trackRect.right) -
+        Math.max(rect.left, trackRect.left)
+      );
 
-    slide.appendChild(img);
-  }
-
-  track.appendChild(slide);
-
-});
+      if (visibleWidth < rect.width * 0.5) {
+        video.pause();
+      }
+    });
+  }, { passive: true });
 }
+
 const serviceData = {
   marine: {
     enTitle: "Marine Services",
