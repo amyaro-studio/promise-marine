@@ -1885,24 +1885,32 @@ async function loadServiceMediaPublic(serviceKey) {
     track.appendChild(slide);
   });
 
-  // إيقاف الفيديو إذا انتقلت الشريحة بعيدًا عن الشاشة
-  track.addEventListener("scroll", () => {
-    const trackRect = track.getBoundingClientRect();
+ // تشغيل الفيديو الظاهر تلقائيًا وإيقاف الباقي
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const video = entry.target;
 
-    videos.forEach(video => {
-      const rect = video.getBoundingClientRect();
-      const visibleWidth = Math.max(
-        0,
-        Math.min(rect.right, trackRect.right) -
-        Math.max(rect.left, trackRect.left)
-      );
+    if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+      videos.forEach(otherVideo => {
+        if (otherVideo !== video) otherVideo.pause();
+      });
 
-      if (visibleWidth < rect.width * 0.5) {
-        video.pause();
-      }
-    });
-  }, { passive: true });
-}
+      video.muted = serviceVideoMuted;
+
+      video.play().catch(error => {
+        console.log("Autoplay was blocked:", error);
+      });
+    } else {
+      video.pause();
+    }
+  });
+}, {
+  root: track,
+  threshold: [0, 0.6, 1]
+});
+
+videos.forEach(video => observer.observe(video));
+  }
 
 const serviceData = {
   marine: {
