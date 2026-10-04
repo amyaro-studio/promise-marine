@@ -1814,11 +1814,14 @@ async function loadServiceMediaPublic(serviceKey) {
   mediaBox.innerHTML =
     '<div class="service-details-placeholder">جاري تحميل الصور والفيديوهات...</div>';
 
-  const { data: media, error } = await supabaseClient
-    .from("service_media")
-    .select("*")
-    .eq("service_key", serviceKey)
-    .order("id", { ascending: true });
+ const { data: media, error } = await supabaseClient
+  .from("service_media")
+  .select("*")
+  .eq("service_key", serviceKey)
+  .order("sort_order", {
+    ascending: true,
+    nullsFirst: false
+  });
 
   if (error) {
     console.error("Service media error:", error.message);
