@@ -420,15 +420,68 @@ function showAdmin() {
     .getElementById("loginBox")
     .classList.add("hidden");
 
-  document
-    .getElementById("adminBox")
-    .classList.remove("hidden");
+  const adminBox =
+    document.getElementById("adminBox");
+
+  adminBox.classList.remove("hidden");
+
+  // زر فتح الموقع العام
+  if (!document.getElementById("openPublicSiteBtn")) {
+
+    const publicSiteButton =
+      document.createElement("a");
+
+    publicSiteButton.id =
+      "openPublicSiteBtn";
+
+    publicSiteButton.href =
+      "./index.html";
+
+    publicSiteButton.textContent =
+      "🌊 Open PROMISE MARINE";
+
+    publicSiteButton.target =
+      "_self";
+
+    publicSiteButton.style.display =
+      "inline-flex";
+
+    publicSiteButton.style.alignItems =
+      "center";
+
+    publicSiteButton.style.justifyContent =
+      "center";
+
+    publicSiteButton.style.padding =
+      "11px 18px";
+
+    publicSiteButton.style.margin =
+      "0 0 18px 0";
+
+    publicSiteButton.style.borderRadius =
+      "10px";
+
+    publicSiteButton.style.textDecoration =
+      "none";
+
+    publicSiteButton.style.fontWeight =
+      "600";
+
+    publicSiteButton.style.background =
+      "#0f4c5c";
+
+    publicSiteButton.style.color =
+      "#fff";
+
+    adminBox.prepend(
+      publicSiteButton
+    );
+  }
 
   loadBoats();
   loadServicesAdmin();
 
 }
-
   // =========================
   // LOGOUT
   // =========================
