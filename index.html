@@ -1829,9 +1829,11 @@ const priceAr =
 /* --------------------------------------------------
    SERVICES DETAILS
 -------------------------------------------------- */
+
 let serviceVideoMuted = true;
 
 async function loadServiceMediaPublic(serviceKey) {
+
   const mediaBox =
     document.getElementById("service-detail-media");
 
@@ -1856,7 +1858,11 @@ async function loadServiceMediaPublic(serviceKey) {
       });
 
   if (error) {
-    console.error("Service media error:", error.message);
+
+    console.error(
+      "Service media error:",
+      error.message
+    );
 
     mediaBox.innerHTML =
       '<div class="service-details-placeholder">تعذر تحميل صور وفيديوهات الخدمة.</div>';
@@ -1865,6 +1871,7 @@ async function loadServiceMediaPublic(serviceKey) {
   }
 
   if (!media || media.length === 0) {
+
     mediaBox.innerHTML =
       '<div class="service-details-placeholder">PROMISE MARINE</div>';
 
@@ -1903,15 +1910,24 @@ async function loadServiceMediaPublic(serviceKey) {
       const video =
         document.createElement("video");
 
-      video.src = item.media_url;
-      video.controls = true;
-      video.muted = serviceVideoMuted;
-      video.playsInline = true;
-      video.preload = "metadata";
+      video.src =
+        item.media_url;
+
+      video.controls =
+        true;
+
+      video.muted =
+        serviceVideoMuted;
+
+      video.playsInline =
+        true;
+
+      video.preload =
+        "metadata";
 
       videos.push(video);
 
-      // لو بدأ فيديو، أوقف كل الفيديوهات الأخرى
+      // إيقاف باقي الفيديوهات عند تشغيل فيديو
       video.addEventListener("play", () => {
 
         videos.forEach(otherVideo => {
@@ -1924,22 +1940,27 @@ async function loadServiceMediaPublic(serviceKey) {
 
       });
 
-      // توحيد حالة الصوت
-      video.addEventListener("volumechange", () => {
+      // توحيد حالة الصوت بين الفيديوهات
+      video.addEventListener(
+        "volumechange",
+        () => {
 
-        serviceVideoMuted =
-          video.muted;
+          serviceVideoMuted =
+            video.muted;
 
-        videos.forEach(otherVideo => {
+          videos.forEach(otherVideo => {
 
-          if (otherVideo !== video) {
-            otherVideo.muted =
-              serviceVideoMuted;
-          }
+            if (otherVideo !== video) {
 
-        });
+              otherVideo.muted =
+                serviceVideoMuted;
 
-      });
+            }
+
+          });
+
+        }
+      );
 
       slide.appendChild(video);
 
@@ -1948,13 +1969,17 @@ async function loadServiceMediaPublic(serviceKey) {
       const img =
         document.createElement("img");
 
-      img.src = item.media_url;
-      img.alt = "PROMISE MARINE";
+      img.src =
+        item.media_url;
+
+      img.alt =
+        "PROMISE MARINE";
 
       slide.appendChild(img);
     }
 
     track.appendChild(slide);
+
   });
 
 
@@ -1968,12 +1993,24 @@ async function loadServiceMediaPublic(serviceKey) {
   indicator.className =
     "service-media-indicator";
 
-  indicator.style.display = "flex";
-  indicator.style.alignItems = "center";
-  indicator.style.justifyContent = "center";
-  indicator.style.gap = "10px";
-  indicator.style.marginTop = "12px";
-  indicator.style.userSelect = "none";
+  indicator.style.display =
+    "flex";
+
+  indicator.style.alignItems =
+    "center";
+
+  indicator.style.justifyContent =
+    "center";
+
+  indicator.style.gap =
+    "10px";
+
+  indicator.style.marginTop =
+    "12px";
+
+  indicator.style.userSelect =
+    "none";
+
 
   const dots =
     document.createElement("div");
@@ -1981,10 +2018,18 @@ async function loadServiceMediaPublic(serviceKey) {
   dots.className =
     "service-media-dots";
 
-  dots.style.display = "flex";
-  dots.style.alignItems = "center";
-  dots.style.justifyContent = "center";
-  dots.style.gap = "6px";
+  dots.style.display =
+    "flex";
+
+  dots.style.alignItems =
+    "center";
+
+  dots.style.justifyContent =
+    "center";
+
+  dots.style.gap =
+    "6px";
+
 
   const counter =
     document.createElement("span");
@@ -1992,9 +2037,15 @@ async function loadServiceMediaPublic(serviceKey) {
   counter.className =
     "service-media-counter";
 
-  counter.style.fontSize = "12px";
-  counter.style.opacity = "0.65";
-  counter.style.whiteSpace = "nowrap";
+  counter.style.fontSize =
+    "12px";
+
+  counter.style.opacity =
+    "0.65";
+
+  counter.style.whiteSpace =
+    "nowrap";
+
 
   indicator.appendChild(dots);
   indicator.appendChild(counter);
@@ -2016,29 +2067,44 @@ async function loadServiceMediaPublic(serviceKey) {
     dot.className =
       "service-media-dot";
 
-    dot.style.width = "7px";
-    dot.style.height = "7px";
-    dot.style.borderRadius = "50%";
-    dot.style.background = "currentColor";
+    dot.style.width =
+      "7px";
+
+    dot.style.height =
+      "7px";
+
+    dot.style.borderRadius =
+      "50%";
+
+    dot.style.background =
+      "currentColor";
+
     dot.style.opacity =
-      index === 0 ? "1" : "0.25";
+      index === 0
+        ? "1"
+        : "0.25";
 
     dot.style.transition =
       "all 0.25s ease";
 
-    dot.style.cursor = "pointer";
+    dot.style.cursor =
+      "pointer";
 
-    dot.addEventListener("click", () => {
+    dot.addEventListener(
+      "click",
+      () => {
 
-      slide.scrollIntoView({
-        behavior: "smooth",
-        inline: "center",
-        block: "nearest"
-      });
+        slide.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest"
+        });
 
-    });
+      }
+    );
 
     dots.appendChild(dot);
+
     dotElements.push(dot);
 
   });
@@ -2046,20 +2112,25 @@ async function loadServiceMediaPublic(serviceKey) {
 
   function updateMediaIndicator(index) {
 
-    dotElements.forEach((dot, dotIndex) => {
+    dotElements.forEach(
+      (dot, dotIndex) => {
 
-      dot.style.opacity =
-        dotIndex === index ? "1" : "0.25";
+        dot.style.opacity =
+          dotIndex === index
+            ? "1"
+            : "0.25";
 
-      dot.style.transform =
-        dotIndex === index
-          ? "scale(1.25)"
-          : "scale(1)";
+        dot.style.transform =
+          dotIndex === index
+            ? "scale(1.25)"
+            : "scale(1)";
 
-    });
+      }
+    );
 
     counter.textContent =
       `${index + 1} / ${slides.length}`;
+
   }
 
 
@@ -2071,50 +2142,69 @@ async function loadServiceMediaPublic(serviceKey) {
   ========================= */
 
   const slideObserver =
-    new IntersectionObserver(entries => {
+    new IntersectionObserver(
+      entries => {
 
-      let bestEntry = null;
+        let bestEntry = null;
 
-      entries.forEach(entry => {
-
-        if (
-          entry.isIntersecting &&
-          entry.intersectionRatio >= 0.6
-        ) {
+        entries.forEach(entry => {
 
           if (
-            !bestEntry ||
-            entry.intersectionRatio >
-            bestEntry.intersectionRatio
+            entry.isIntersecting &&
+            entry.intersectionRatio >= 0.6
           ) {
-            bestEntry = entry;
+
+            if (
+              !bestEntry ||
+              entry.intersectionRatio >
+              bestEntry.intersectionRatio
+            ) {
+
+              bestEntry =
+                entry;
+
+            }
+
+          }
+
+        });
+
+
+        if (bestEntry) {
+
+          const index =
+            slides.indexOf(
+              bestEntry.target
+            );
+
+          if (index !== -1) {
+
+            updateMediaIndicator(
+              index
+            );
+
           }
 
         }
 
-      });
-
-      if (bestEntry) {
-
-        const index =
-          slides.indexOf(
-            bestEntry.target
-          );
-
-        if (index !== -1) {
-          updateMediaIndicator(index);
-        }
-
+      },
+      {
+        root: track,
+        threshold: [
+          0.6,
+          0.8,
+          1
+        ]
       }
-
-    }, {
-      root: track,
-      threshold: [0.6, 0.8, 1]
-    });
+    );
 
 
   slides.forEach(slide => {
-    slideObserver.observe(slide);
+
+    slideObserver.observe(
+      slide
+    );
+
   });
 
 
@@ -2123,57 +2213,253 @@ async function loadServiceMediaPublic(serviceKey) {
   ========================= */
 
   const videoObserver =
-    new IntersectionObserver(entries => {
+    new IntersectionObserver(
+      entries => {
 
-      entries.forEach(entry => {
+        entries.forEach(entry => {
 
-        const video =
-          entry.target;
+          const video =
+            entry.target;
 
-        if (
-          entry.isIntersecting &&
-          entry.intersectionRatio >= 0.6
-        ) {
+          if (
+            entry.isIntersecting &&
+            entry.intersectionRatio >= 0.6
+          ) {
 
-          videos.forEach(otherVideo => {
+            videos.forEach(
+              otherVideo => {
 
-            if (otherVideo !== video) {
-              otherVideo.pause();
-            }
+                if (
+                  otherVideo !== video
+                ) {
 
-          });
+                  otherVideo.pause();
 
-          video.muted =
-            serviceVideoMuted;
+                }
 
-          video.play().catch(error => {
-
-            console.log(
-              "Autoplay was blocked:",
-              error
+              }
             );
 
-          });
+            video.muted =
+              serviceVideoMuted;
 
-        } else {
+            video.play().catch(
+              error => {
 
-          video.pause();
+                console.log(
+                  "Autoplay was blocked:",
+                  error
+                );
 
-        }
+              }
+            );
 
-      });
+          } else {
 
-    }, {
-      root: track,
-      threshold: [0, 0.6, 1]
-    });
+            video.pause();
+
+          }
+
+        });
+
+      },
+      {
+        root: track,
+        threshold: [
+          0,
+          0.6,
+          1
+        ]
+      }
+    );
 
 
   videos.forEach(video => {
-    videoObserver.observe(video);
+
+    videoObserver.observe(
+      video
+    );
+
   });
 
 }
+
+
+/* =========================
+   SERVICE DATA
+========================= */
+
+const serviceData = {
+
+  marine: {
+
+    enTitle:
+      "Marine Services",
+
+    arTitle:
+      "الخدمات البحرية",
+
+    enText:
+      "Berthing, boat care and marine support for boats and yachts.",
+
+    arText:
+      "رسو المراكب والعناية بها وتقديم الدعم البحري للمراكب واليخوت."
+
+  },
+
+
+  workshop: {
+
+    enTitle:
+      "Boat Repair & Maintenance Workshop",
+
+    arTitle:
+      "ورشة صيانة وإصلاح المراكب",
+
+    enText:
+      "Maintenance, repair and preparation of boats, with technical, mechanical and electrical work tailored to each vessel.",
+
+    arText:
+      "صيانة وإصلاح وتجهيز المراكب، مع تنفيذ الأعمال الفنية والميكانيكية والكهربائية حسب احتياج كل مركب."
+
+  },
+
+
+  finishing: {
+
+    enTitle:
+      "Boat Finishing & Restoration",
+
+    arTitle:
+      "تشطيبات وتجديد المراكب",
+
+    enText:
+      "Professional boat finishing and restoration, with attention to detail, final appearance and quality workmanship.",
+
+    arText:
+      "تشطيبات وتجديد احترافي للمراكب، مع الاهتمام بالتفاصيل والمظهر النهائي وجودة التنفيذ."
+
+  },
+
+
+  license: {
+
+    enTitle:
+      "Driving License Services",
+
+    arTitle:
+      "خدمات رخص قيادة المراكب",
+
+    enText:
+      "Boat and yacht driving license services for individuals.",
+
+    arText:
+      "خدمات رخص قيادة المراكب واليخوت للأفراد."
+
+  }
+
+};
+
+
+/* =========================
+   SERVICE DETAILS ELEMENTS
+========================= */
+
+const serviceDetailsSection =
+  document.getElementById(
+    "service-details"
+  );
+
+
+const serviceDetailTitle =
+  document.getElementById(
+    "service-detail-title"
+  );
+
+
+const serviceDetailText =
+  document.getElementById(
+    "service-detail-text"
+  );
+
+
+/* =========================
+   SERVICE BUTTONS
+========================= */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    const button =
+      event.target.closest(
+        ".service-btn"
+      );
+
+    if (!button) return;
+
+    event.preventDefault();
+
+
+    const key =
+      button.dataset.service;
+
+
+    const service =
+      serviceData[key];
+
+
+    if (!service) return;
+
+
+    loadServiceMediaPublic(
+      key
+    );
+
+
+    const isArabic =
+      document.documentElement.lang ===
+      "ar";
+
+
+    serviceDetailTitle.dataset.en =
+      service.enTitle;
+
+    serviceDetailTitle.dataset.ar =
+      service.arTitle;
+
+
+    serviceDetailText.dataset.en =
+      service.enText;
+
+    serviceDetailText.dataset.ar =
+      service.arText;
+
+
+    serviceDetailTitle.textContent =
+      isArabic
+        ? service.arTitle
+        : service.enTitle;
+
+
+    serviceDetailText.textContent =
+      isArabic
+        ? service.arText
+        : service.enText;
+
+
+    serviceDetailsSection.classList.add(
+      "active"
+    );
+
+
+    serviceDetailsSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+  }
+);
 /* --------------------------------------------------
    INITIAL LANGUAGE
 -------------------------------------------------- */
