@@ -344,10 +344,11 @@
 
   const SUPABASE_KEY =
     "sb_publishable_73bsUKM0l9Q7Raw-ooRnpA_xWMca_nx";
-
-  const ADMIN_UID =
-    "9290441e-47ed-408d-acc0-f29b0a539912";
-
+  
+const ADMIN_UIDS = [
+  "9290441e-47ed-408d-acc0-f29b0a539912",
+  "21e06d18-3a52-494e-8040-10356b07a199"
+];
   const supabaseClient =
     supabase.createClient(
       SUPABASE_URL,
@@ -396,8 +397,7 @@
       return;
     }
 
-    if (!data.user || data.user.id !== ADMIN_UID) {
-
+if (!data.user || !ADMIN_UIDS.includes(data.user.id)) {
       await supabaseClient.auth.signOut();
 
       message.innerHTML =
